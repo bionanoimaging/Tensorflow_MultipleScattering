@@ -84,7 +84,7 @@ class BPM(object):
         #   + self.kycoord * tf_helper.repmat4d(tf_helper.yy((self.mysize[1], self.mysize[2])), self.Nc))) # Corresponds to a plane wave under many oblique illumination angles - bfxfun
          
         # effect of the illumination angle is kep as zero for now
-        self.RefrCos = 0.
+        self.RefrCos = 1.
         print('Beware that we do not take care of the inclination angle yet!!')
         
         # compute the generic propagator
@@ -131,7 +131,9 @@ class BPM(object):
         ''' Porting numpy to Tensorflow '''
         # Define slice-wise propagator (i.e. Fresnel kernel)
         self.TF_myprop = tf.cast(tf.complex(np.real(np.squeeze(self.myprop)),np.imag(np.squeeze(self.myprop))), dtype=tf.complex64)
-
+        self.TF_RefrEffect = tf.cast(self.RefrEffect, tf.complex64)
+        self.TF_obj_input = tf.cast(TF_obj_input, tf.complex64)
+        
         # This corresponds to the input illumination modes
         is_not_tf = True
         if is_not_tf:
@@ -144,7 +146,7 @@ class BPM(object):
             if TF_obj_input is not None:
                 with tf.name_scope('Refract'):
                     # beware the "i" is in TF_RefrEffect already!
-                    self.TF_f = tf.exp(self.TF_RefrEffect*TF_obj_input)
+                    self.TF_f = tf.exp(self.TF_RefrEffect*self.TF_obj_input)
                     self.TF_A_prop = self.TF_A_input * self.TF_f  # refraction step
             else:
                 self.TF_A_prop = self.TF_A_input                                                 

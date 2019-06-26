@@ -13,14 +13,26 @@ import numpy as np
 import NanoImagingPack as nip
 import InverseModelling as im
 
+'''TEST SCRIPT for the BPM algorithm
+B.Diederich, 26.06.2019'''
+
+# define some parameters
+mysize = (1,128,128) # Z;XY
+
 # create a pseudo input field
-myinputfield = np.ones((128,128))+0j
+myinputfield = np.ones((mysize[0],mysize[0]))+0j # plane wave
 TF_A_input = tf.constant(myinputfield)
 
+# load some object slice 
+myobjslice = nip.extract(nip.readim(), ROIsize=mysize)+0j
+TF_obj_input = tf.constant(myobjslice)
 
-myBPM = bpm.BPM()
+
+# create the BPM object with default parameters
+myBPM = bpm.BPM(mysize = mysize) 
 myBPM.printvar()
-myBPM.propagate(TF_A_input=myinputfield, TF_obj_input = None, proptype = '2D_2D')
+myBPM.propagate(TF_A_input=myinputfield, TF_obj_input = TF_obj_input, proptype = '2D_2D')
+
 
 # visualize the kernel
 myBPM.visKernel()
@@ -28,4 +40,4 @@ myBPM.visKernel()
 myres = myBPM.compute()
 
 print('Display the result')
-nip.view(np.angle(myres))
+nip.view(np.abs(myres))
