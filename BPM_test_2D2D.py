@@ -20,17 +20,15 @@ B.Diederich, 26.06.2019'''
 mysize = (20,128,128) # Z;XY
 mypixelsize = (.65/4, .65/4, .65/4)
 # create a pseudo input field
-myinputfield = np.ones((mysize[1],mysize[2]))+0j # plane wave
+myinputfield = nip.ones((mysize[1],mysize[2]))+0j # plane wave
 TF_A_input = tf.constant(myinputfield)
 
 # load some object slice 
 myobjslice = .1*nip.extract(nip.readim(), ROIsize=mysize)+0j
 TF_obj_input = tf.constant(myobjslice)
 
-
 # create the BPM object with default parameters
 myBPM = bpm.BPM(mysize = mysize, pixelsize=mypixelsize) 
-
 
 myBPM.printvar()
 myBPM.propagate(TF_A_input=myinputfield, TF_obj_input = TF_obj_input, proptype = '2D_2D')

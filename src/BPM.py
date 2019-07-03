@@ -164,7 +164,7 @@ class BPM(object):
             else:
                 self.TF_A_prop = self.TF_A_input                                                 
             with tf.name_scope('Propagate'):
-                self.TF_A_output = im.ift(im.ft(tf.expand_dims(self.TF_A_prop,0))* self.TF_Allprop) # diffraction step
+                self.TF_A_output = im.ift2d(im.ft2d(tf.expand_dims(self.TF_A_prop,0))* self.TF_Allprop) # diffraction step
 
         return self.TF_A_output
     
