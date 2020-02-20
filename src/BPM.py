@@ -57,15 +57,28 @@ class BPM(object):
             else:
                 self.dy = pixelsize[2]
 
-            
-        self.Nx = mysize[1]
-        self.Ny = mysize[2]
-        self.Nz = mysize[0]
-        
-        
+        # define size
         self.mysize = mysize
+        
+        if len(mysize)==3:
+            # we have only one illumination direction to propagate 
+            self.Nx = mysize[1]
+            self.Ny = mysize[2]
+            self.Nz = mysize[0]
+            self.Nillu = 1
+            print('We propagate one illumination mode')
+            
+        elif len(mysize)==4:
+            # we have only one illumination direction to propagate 
+            self.Nx = mysize[1]
+            self.Ny = mysize[2]
+            self.Nz = mysize[0]
+            self.Nillu = mysize[-1]
+            print('We propagate '+str(self.Nillu)+ ' illumination modes')
+        
+        # define some values
         self.my_n = self.n_embb+np.zeros(self.mysize)
-        self.input_field = 0j + np.ones((self.Nx, self.Ny)) 
+        self.input_field = 0j + np.ones((self.Nx, self.Ny, self.Nillu))
         
         # compute the distances we want stuff to be propagated 
         if z_start is None:
@@ -115,7 +128,7 @@ class BPM(object):
         self.RefrEffect = 1j * self.k0 * self.RefrCos
 
         
-    def propagate(self, TF_A_input, TF_obj_input = None, proptype = '2D_2D'):
+    def propagate(self, TF_A_input = None, TF_obj_input = None, proptype = '2D_2D'):
         '''
         This is the generic propagator 
         
@@ -124,6 +137,12 @@ class BPM(object):
         TF_obj_input - the n-dimensional refractive index distribution 
         proptype - Want to map 2D->2D, 2D->3D
         '''
+        
+        if TF_A_input is None:
+            TF_A_input = tf.constant(self.input_field)
+            print('We use the default input field - which is a plane wave!')
+            
+            
         self.compute_2D_propagator()
         if proptype=='2D_2D':
             # only propagate a 2D slice to a 2D slice at certain distance

@@ -14,13 +14,21 @@ import NanoImagingPack as nip
 import InverseModelling as im
 
 '''TEST SCRIPT for the BPM algorithm
-B.Diederich, 26.06.2019'''
+B.Diederich, 26.06.2019
+
+The input field ist aranged as follows:
+    Nx, Ny, Nillu
+    
+'''
 
 # define some parameters
 mysize = (20,128,128) # Z;XY
+Nillu = 10
 mypixelsize = (.65/4, .65/4, .65/4)
 # create a pseudo input field
 myinputfield = nip.ones((mysize[1],mysize[2]))+0j # plane wave
+myinputfield = nip.ones((mysize[1],mysize[2],Nillu))+0j # plane wave
+
 TF_A_input = tf.constant(myinputfield)
 
 # load some object slice 
@@ -39,6 +47,7 @@ myBPM.visKernel()
 myres = myBPM.compute()
 
 print('Display the result')
-nip.view(np.abs(myres))
+nip.v5(myres,showPhases=True,gamma=1.0)
+
 
 
